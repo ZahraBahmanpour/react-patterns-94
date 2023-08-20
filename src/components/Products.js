@@ -1,9 +1,13 @@
+import { useRef } from "react";
 import { useGetProductsQuery } from "../features/product/productApiSlice";
+import useClickOutside from "../hooks/useClickOutside";
 import usePagination from "../hooks/usePagination";
 import ProductItem from "./ProductItem";
 
 const Products = () => {
   const [page, toNextPage, toPreviousPage] = usePagination();
+  const divRef = useRef(null);
+  useClickOutside(divRef, () => alert("Clicked Outside!"));
   const {
     data: products,
     isLoading,
@@ -24,8 +28,10 @@ const Products = () => {
       {products.map((product) => (
         <ProductItem key={product.id} {...product} />
       ))}
-      <button onClick={() => toNextPage()}>Next</button>
-      <button onClick={() => toPreviousPage()}>Previous</button>
+      <div ref={divRef}>
+        <button onClick={() => toNextPage()}>Next</button>
+        <button onClick={() => toPreviousPage()}>Previous</button>
+      </div>
     </>
   );
 };
