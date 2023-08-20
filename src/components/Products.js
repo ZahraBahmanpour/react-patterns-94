@@ -1,10 +1,15 @@
 import { useGetProductsQuery } from "../features/product/productApiSlice";
+import usePagination from "../hooks/usePagination";
 import ProductItem from "./ProductItem";
-import withLoader from "./withLoader";
-import SearchWrapper from "./Wrapper";
 
 const Products = () => {
-  const { data: products, isLoading, isError, error } = useGetProductsQuery();
+  const [page, toNextPage, toPreviousPage] = usePagination();
+  const {
+    data: products,
+    isLoading,
+    isError,
+    error,
+  } = useGetProductsQuery(page);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -14,21 +19,14 @@ const Products = () => {
     return <div>{error.status}</div>;
   }
 
-  // return products.map((product) => (
-  //   <ProductItem key={product.id} {...product} />
-  // ));
-
   return (
-    <SearchWrapper
-      render={(queryString) => {
-        const filteredProducts = products.filter((p) =>
-          p.name.includes(queryString)
-        );
-        return filteredProducts.map((product) => (
-          <ProductItem key={product.id} {...product} />
-        ));
-      }}
-    />
+    <>
+      {products.map((product) => (
+        <ProductItem key={product.id} {...product} />
+      ))}
+      <button onClick={() => toNextPage()}>Next</button>
+      <button onClick={() => toPreviousPage()}>Previous</button>
+    </>
   );
 };
 
